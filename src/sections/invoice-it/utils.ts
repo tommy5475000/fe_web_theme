@@ -69,7 +69,7 @@ export function applyFilterIvn({ inputData, comparator, filterName }: ApplyFilte
 
   if (filterName) {
     inputData = inputData.filter(
-      (inv) => inv.tenNcc.toLowerCase().includes(filterName),
+      (inv) => inv.tenNcc.toLowerCase().includes(filterName.toLowerCase()),
     );
   }
 

@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useQuery } from "@tanstack/react-query"
 
-import { Box, Button, Card, Table, TableBody, TableCell, TableContainer, TablePagination, TableRow, Typography } from "@mui/material";
+import { Box,  Card, Table, TableBody,  TableContainer, TablePagination, TableRow, Typography } from "@mui/material";
 
 import { getInvoiceXlm } from "src/apis/it";
 import { DashboardContent } from "src/layouts/dashboard";
@@ -9,7 +9,6 @@ import { DashboardContent } from "src/layouts/dashboard";
 import { ButtonGroup } from "src/components/button";
 import { Scrollbar } from "src/components/scrollbar";
 
-import { useTable } from "src/sections/user/view";
 import { TableNoData } from "src/sections/user/table-no-data";
 import { TableEmptyRows } from "src/sections/user/table-empty-rows";
 
@@ -25,7 +24,7 @@ export function InvoiceItView() {
   const handleImport = () => { }
   const handleExport = () => { }
 
-  const { data: dataXml = [], isLoading, isError } = useQuery<InvoiceProps[]>({
+  const { data: dataXml = [] } = useQuery<InvoiceProps[]>({
     queryKey: ["dataXml"],
     queryFn: getInvoiceXlm
   })
@@ -86,8 +85,8 @@ export function InvoiceItView() {
                   { id: 'soHd', label: 'Số HĐ', minWidth: 80 },
                   { id: 'kyHieuHd', label: 'Ký Hiệu' },
                   { id: 'ngayHd', label: 'Ngày', minWidth: 120 },
-                  { id: 'noiDung', label: 'Nội Dung',minWidth: 150 },
-                  { id: 'tenNcc', label: 'Tên NCC' },
+                  { id: 'tenNcc', label: 'Tên NCC', minWidth: 150 },
+                  { id: 'noiDung', label: 'Nội Dung' },
                   { id: 'tienThue', label: 'Vat' },
                   { id: 'tongTien', label: 'Tổng Tiền' },
                   { id: 'loaiHing', label: 'Loại Hình', minWidth: 120 },
@@ -119,20 +118,86 @@ export function InvoiceItView() {
           </TableContainer>
         </Scrollbar>
 
-                <TablePagination
-                  component="div"
-                  page={table.page}
-                  count={dataXml.length}
-                  rowsPerPage={table.rowsPerPage}
-                  onPageChange={table.onChangePage}
-                  rowsPerPageOptions={[10, 50]}
-                  onRowsPerPageChange={table.onChangeRowsPerPage}
-                />
+        <TablePagination
+          component="div"
+          page={table.page}
+          count={dataXml.length}
+          rowsPerPage={table.rowsPerPage}
+          onPageChange={table.onChangePage}
+          rowsPerPageOptions={[10, 50, 100]}
+          onRowsPerPageChange={table.onChangeRowsPerPage}
+        />
       </Card>
 
     </DashboardContent >
   );
 
+}
+  
+// ----------------------------------------------------------------------
 
+export function useTable() {
+  const [page, setPage] = useState(0);
+  const [orderBy, setOrderBy] = useState('tenNcc');
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selected, setSelected] = useState<string[]>([]);
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
 
+  const onSort = useCallback(
+    (id: string) => {
+      const isAsc = orderBy === id && order === 'asc';
+      setOrder(isAsc ? 'desc' : 'asc');
+      setOrderBy(id);
+    },
+    [order, orderBy]
+  );
+
+  const onSelectAllRows = useCallback((checked: boolean, newSelecteds: string[]) => {
+    if (checked) {
+      setSelected(newSelecteds);
+      return;
+    }
+    setSelected([]);
+  }, []);
+
+  const onSelectRow = useCallback(
+    (inputValue: string) => {
+      const newSelected = selected.includes(inputValue)
+        ? selected.filter((value) => value !== inputValue)
+        : [...selected, inputValue];
+
+      setSelected(newSelected);
+    },
+    [selected]
+  );
+
+  const onResetPage = useCallback(() => {
+    setPage(0);
+  }, []);
+
+  const onChangePage = useCallback((event: unknown, newPage: number) => {
+    setPage(newPage);
+  }, []);
+
+  const onChangeRowsPerPage = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setRowsPerPage(parseInt(event.target.value, 10));
+      onResetPage();
+    },
+    [onResetPage]
+  );
+
+  return {
+    page,
+    order,
+    onSort,
+    orderBy,
+    selected,
+    rowsPerPage,
+    onSelectRow,
+    onResetPage,
+    onChangePage,
+    onSelectAllRows,
+    onChangeRowsPerPage,
+  };
 }

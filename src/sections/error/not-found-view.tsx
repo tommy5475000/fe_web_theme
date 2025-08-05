@@ -25,13 +25,12 @@ export function NotFoundView() {
         }}
       >
         <Typography variant="h3" sx={{ mb: 2 }}>
-          Sorry, page not found!
+          Xin lỗi, không tìm thấy trang này!
         </Typography>
-
+{/* 
         <Typography sx={{ color: 'text.secondary', maxWidth: 480, textAlign: 'center' }}>
-          Sorry, we couldn’t find the page you’re looking for. Perhaps you’ve mistyped the URL? Be
-          sure to check your spelling.
-        </Typography>
+          Xin lỗi, Chúng tôi không tìm thấy trang bạn đang vào, vui lòng kiểm tra lại.
+        </Typography> */}
 
         <Box
           component="img"
@@ -44,7 +43,7 @@ export function NotFoundView() {
         />
 
         <Button component={RouterLink} href="/" size="large" variant="contained" color="inherit">
-          Go to home
+          Về trang chủ
         </Button>
       </Container>
     </>
