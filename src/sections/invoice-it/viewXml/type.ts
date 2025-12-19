@@ -5,3 +5,8 @@ export type ViewXmlProps = {
     rowSelect: InvoiceProps | null
 
 }
+
+export type ViewXmlForm={
+    id:number;
+    file:File;
+}

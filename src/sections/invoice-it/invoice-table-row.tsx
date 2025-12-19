@@ -23,7 +23,7 @@ export type InvoiceProps = {
     webSite: string,
     soTienBangChu: string,
     tyGia: number,
-    file: File[],
+    file?: string|null,
     invoiceItDetails?: {
         id: number;
         danhSachHang: string;

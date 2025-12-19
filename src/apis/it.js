@@ -57,3 +57,24 @@ export const delInv = async (id) => {
     throw error.response.data?.message
   }
 }
+  // ----- UP FILE SCAN ----- //
+export const upFile = async (id, file) => {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);  // phải trùng với FileInterceptor('file')
+
+    const response = await fetcher.post(
+      `/invoice-it/uploadScan?id=${id}`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || 'Upload lỗi';
+  }
+};
